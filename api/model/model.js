@@ -1,27 +1,9 @@
 'use strict';
-const thinkagain = require('thinkagain')();
-
-module.exports = {
-    role: role,
-    issueStatus: issueStatus,
-    issuePriority: issuePriority,
-    issueTag: issueTag,
-
-    Group: Group,
-    Project: Project,
-    Directory: Directory,
-    User: User,
-    Issue: Issue,
-    Comment: Comment
-};
+const thinkagain = require('thinkagain')({
+    db: 'WorkPlanner'
+});
 
 //ENUMS
-
-const role = {
-    ADMIN: 'Admin',
-    OWNER: 'Owner',
-    MEMBER: 'Member'
-}
 
 const issueStatus = {
     OPEN: 'Open',
@@ -52,19 +34,6 @@ const issueTag = {
     REFACTOR: 'Refactor'
 }
 
-//GROUP
-
-let Group = thinkagain.createModel('Groups', {
-    type: 'object',
-    properties: {
-        id: { type: 'string' },
-        title: { type: 'string' },
-        description: { type: 'string' },
-        visible: { type: 'boolean' }
-    },
-    required: ['title', 'visible']
-});
-
 // PROJECT
 
 let Project = thinkagain.createModel('Projects', {
@@ -72,14 +41,10 @@ let Project = thinkagain.createModel('Projects', {
     properties: {
         id: { type: 'string' },
         title: { type: 'string' },
-        description: { type: 'string' },
-        idGroup: { type: 'string' },
-        visible: { type: 'boolean' }
+        description: { type: 'string' }
     },
-    required: ['title', 'idGroup']
+    required: ['title']
 });
-
-Project.belongsTo(Group, 'group', 'idGroup', 'id');
 
 // DIRECTORY
 
@@ -96,24 +61,6 @@ let Directory = thinkagain.createModel('Directories', {
 
 Directory.belongsTo(Project, 'project', 'idProject', 'id');
 
-// USER
-
-let User = thinkagain.createModel('Users', {
-    type: 'object',
-    properties: {
-        id: { type: 'string' },
-        username: { type: 'string' },
-        password: { type: 'string' },
-        firstName: { type: 'string' },
-        lastName: { type: 'string' },
-        role: { type: 'string' },
-        idGroup: { type: 'string' }
-    },
-    required: ['username', 'password', 'firstName', 'lastName']
-});
-
-User.belongsTo(Group, 'group', 'idGroup', 'id');
-
 // ISSUE
 
 let Issue = thinkagain.createModel('Issues', {
@@ -128,15 +75,13 @@ let Issue = thinkagain.createModel('Issues', {
         priority: { type: 'string' },
         tag: { type: 'string' },
         idProject: { type: 'string' },
-        idDirectory: { type: 'string' },
-        idUser: { type: 'string' }
+        idDirectory: { type: 'string' }
     },
     required: ['title', 'createDate', 'status', 'tag', 'idProject', 'idDirectory']
 });
 
 Issue.belongsTo(Project, 'project', 'idProject', 'id');
 Issue.belongsTo(Directory, 'directory', 'idDirectory', 'id');
-Issue.belongsTo(User, 'user', 'idUser', 'id');
 
 // COMMENT
 
@@ -145,10 +90,18 @@ let Comment = thinkagain.createModel('Comments', {
     properties: {
         id: { type: 'string' },
         createDate: { type: 'string', format: 'date-time' },
-        content: { type: 'string' },
-        idUser: { type: 'string' }
+        content: { type: 'string' }
     },
-    required: ['createDate', 'content', 'idUser']
+    required: ['createDate', 'content']
 });
 
-Comment.belongsTo(User, 'user', 'idUser', 'id');
+module.exports = {
+    issueStatus: issueStatus,
+    issuePriority: issuePriority,
+    issueTag: issueTag,
+
+    Project: Project,
+    Directory: Directory,
+    Issue: Issue,
+    Comment: Comment
+};
