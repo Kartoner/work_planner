@@ -42,6 +42,40 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /projects:
+    x-swagger-router-controller: management_controller
+    get:
+      description: Shows list of projects
+      operationId: getProjects
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/AllProjectsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}:
+    x-swagger-router-controller: management_controller
+    get:
+      description: Shows list of projects
+      operationId: getProject
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ProjectResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -52,6 +86,37 @@ definitions:
     properties:
       message:
         type: string
+  AllProjectsResponse:
+    properties:
+      projects:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+  ProjectResponse:
+    required:
+      - id
+      - title
+    properties:
+      id: 
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      directories:
+        type: array
+        items:
+          type: object
+          properties:
+            id: 
+              type: string
+            title:
+              type: string
   ErrorResponse:
     required:
       - message

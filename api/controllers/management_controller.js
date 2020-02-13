@@ -2,6 +2,8 @@
 
 var util = require('util');
 var model = require('../model/model.js');
+const thinkagain = require('thinkagain')();
+var r = thinkagain.r;
 
 module.exports = {
     getProjects,
@@ -9,7 +11,7 @@ module.exports = {
     createProject,
     modifyProject,
     deleteProject,
-    getDirectories,
+    /*getDirectories,
     getDirectory,
     createDirectory,
     modifyDirectory,
@@ -21,38 +23,44 @@ module.exports = {
     deleteIssue,
     createComment,
     modifyComment,
-    deleteComment
+    deleteComment */
 }
 
-function getProjects(res, req, next) {
-    r.db("WorkPlanner").table("Projects").run.then(
+function getProjects(req, res, next) {
+    r.db("WorkPlanner").table("Projects").run().then(
         function(result) {
+            console.log(JSON.stringify(result));
             res.json(result);
         }
     );
 }
 
-function getProject(res, req, next) {
+function getProject(req, res, next) {
     r.db("WorkPlanner").table("Projects")
-        .get(req.swagger.operation.getParameter('id').value(req).value)
+        .get(req.swagger.params.id.value).merge(function(project) {
+            return {
+                'directories': r.db("WorkPlanner").table("Directories").filter({ idProject: project('id') }).coerceTo('array')
+            };
+        })
         .run().then(
             function(result) {
+                console.log(JSON.stringify(result));
                 res.json(result);
             });
 }
 
-function createProject(res, req, next) {
-    r.db("WorkPlanner").table("Projects").insert(req.body)
+function createProject(req, res, next) {
+    r.db("WorkPlanner").table("Projects").insert()
         .run().then(
             function(result) {
                 res.json();
             });
 }
 
-function modifyProject(res, req, next) {
+function modifyProject(req, res, next) {
     res.json();
 }
 
-function deleteProject(res, req, next) {
+function deleteProject(req, res, next) {
     res.json();
 }
