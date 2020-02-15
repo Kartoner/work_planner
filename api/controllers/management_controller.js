@@ -11,12 +11,10 @@ module.exports = {
     createProject,
     modifyProject,
     deleteProject,
-    getDirectories,
     getDirectory,
     createDirectory,
     modifyDirectory,
     deleteDirectory,
-    getIssues,
     getIssue,
     createIssue,
     modifyIssue,
@@ -104,15 +102,23 @@ function deleteProject(req, res, next) {
             r.db("WorkPlanner").table("Directories").filter({ idProject: result["changes"][0]["old_val"]["id"] }).delete({ returnChanges: true })
                 .run().then(function(result) {
                     // Delete issues
-                    result["changes"].array.forEach(element => {
-                        r.db("WorkPlanner").table("Issues").filter({ idDirectory: element["old_val"]["id"] }).delete({ returnChanges: true })
-                            .run().then(function(result) {
-                                // Delete comments
-                                result["changes"].array.forEach(element => {
-                                    r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
+                    try {
+                        result["changes"].array.forEach(element => {
+                            r.db("WorkPlanner").table("Issues").filter({ idDirectory: element["old_val"]["id"] }).delete({ returnChanges: true })
+                                .run().then(function(result) {
+                                    // Delete comments
+                                    try {
+                                        result["changes"].array.forEach(element => {
+                                            r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
+                                        });
+                                    } catch (err) {
+                                        console.log("No comments to delete");
+                                    }
                                 });
-                            });
-                    });
+                        });
+                    } catch (err) {
+                        console.log("Empty directory");
+                    }
                 });
             // Return list of projects
             r.db("WorkPlanner").table("Projects").run().then(
@@ -122,16 +128,6 @@ function deleteProject(req, res, next) {
                 }
             );
         });
-}
-
-function getDirectories(req, res, next) {
-    var projectId = req.swagger.params.projectId.value;
-    r.db("WorkPlanner").table("Directories").filter({ idProject: projectId }).run().then(
-        function(result) {
-            console.log(JSON.stringify(result));
-            res.json(result);
-        }
-    );
 }
 
 function getDirectory(req, res, next) {
@@ -150,7 +146,7 @@ function getDirectory(req, res, next) {
 }
 
 function createDirectory(req, res, next) {
-    var projectId = req.swagger.params.projectId.value;
+    var projectId = req.swagger.params.id.value;
     var newDirectory = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value,
@@ -174,8 +170,7 @@ function createDirectory(req, res, next) {
 }
 
 function modifyDirectory(req, res, next) {
-    var projectId = req.swagger.params.projectId.value;
-    var dirId = req.swagger.params.id.value;
+    var dirId = req.swagger.params.directoryId.value;
     var updatedDirectory = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value
@@ -183,7 +178,7 @@ function modifyDirectory(req, res, next) {
     r.db("WorkPlanner").table("Directories").get(dirId).update(updatedDirectory)
         .run().then(function(result) {
             r.db("WorkPlanner").table("Directories")
-                .get(result["generated_keys"][0]).merge(function(directory) {
+                .get(dirId).merge(function(directory) {
                     return {
                         'issues': r.db("WorkPlanner").table("Issues").filter({ idDirectory: directory('id') }).coerceTo('array')
                     };
@@ -197,39 +192,43 @@ function modifyDirectory(req, res, next) {
 }
 
 function deleteDirectory(req, res, next) {
-    var projectId = req.swagger.params.projectId.value;
-    var dirId = req.swagger.params.id.value;
+    var projectId = req.swagger.params.id.value;
+    var dirId = req.swagger.params.directoryId.value;
     // Delete directory
     r.db("WorkPlanner").table("Directories").get(dirId).delete({ returnChanges: true })
         .run().then(function(result) {
             // Delete issues
-            result["changes"].array.forEach(element => {
-                r.db("WorkPlanner").table("Issues").filter({ idDirectory: element["old_val"]["id"] }).delete({ returnChanges: true })
-                    .run().then(function(result) {
-                        // Delete comments
-                        result["changes"].array.forEach(element => {
-                            r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
+            try {
+                result["changes"].array.forEach(element => {
+                    r.db("WorkPlanner").table("Issues").filter({ idDirectory: element["old_val"]["id"] }).delete({ returnChanges: true })
+                        .run().then(function(result) {
+                            // Delete comments
+                            try {
+                                result["changes"].array.forEach(element => {
+                                    r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
+                                });
+                            } catch (err) {
+                                console.log("No comments to delete");
+                            }
                         });
-                    });
-            });
-            //return list of directories
-            r.db("WorkPlanner").table("Projects").filter({ idProject: projectId }).run().then(
-                function(result) {
-                    console.log(JSON.stringify(result));
-                    res.json(result);
-                }
-            );
-        });
-}
 
-function getIssues(req, res, next) {
-    var dirId = req.swagger.params.directoryId.value;
-    r.db("WorkPlanner").table("Issues").filter({ idDirectory: dirId }).run().then(
-        function(result) {
-            console.log(JSON.stringify(result));
-            res.json(result);
-        }
-    );
+                });
+            } catch (err) {
+                console.log("Empty directory");
+            }
+            //return list of directories
+            r.db("WorkPlanner").table("Projects")
+                .get(projectId).merge(function(project) {
+                    return {
+                        'directories': r.db("WorkPlanner").table("Directories").filter({ idProject: project('id') }).coerceTo('array')
+                    };
+                })
+                .run().then(
+                    function(result) {
+                        console.log(JSON.stringify(result));
+                        res.json(result);
+                    });
+        });
 }
 
 function getIssue(req, res, next) {
@@ -252,8 +251,7 @@ function createIssue(req, res, next) {
     var newIssue = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value,
-        createDate: Date.toString(),
-        modifyDate: "",
+        createDate: Date().toString(),
         status: model.issueStatus.OPEN,
         priority: req.swagger.params.priority.value,
         tag: req.swagger.params.tag.value,
@@ -281,7 +279,7 @@ function modifyIssue(req, res, next) {
     var updatedIssue = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value,
-        modifyDate: Date.toString(),
+        modifyDate: Date().toString(),
         status: req.swagger.params.status.value,
         priority: req.swagger.params.priority.value,
         tag: req.swagger.params.tag.value
@@ -290,7 +288,7 @@ function modifyIssue(req, res, next) {
         .run().then(
             function(result) {
                 r.db("WorkPlanner").table("Issues")
-                    .get(result["generated_keys"][0]).merge(function(issue) {
+                    .get(issueId).merge(function(issue) {
                         return {
                             'comments': r.db("WorkPlanner").table("Comments").filter({ idIssue: issue('id') }).coerceTo('array')
                         };
@@ -310,16 +308,25 @@ function deleteIssue(req, res, next) {
     r.db("WorkPlanner").table("Issues").get(issueId).delete({ returnChanges: true })
         .run().then(function(result) {
             // Delete comments
-            result["changes"].array.forEach(element => {
-                r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
-            });
+            try {
+                result["changes"].array.forEach(element => {
+                    r.db("WorkPlanner").table("Comments").filter({ idIssue: element["old_val"]["id"] }).delete().run();
+                });
+            } catch (err) {
+                console.log("No comments to delete");
+            }
             // Return list of issues
-            r.db("WorkPlanner").table("Issues").filter({ idDirectory: dirId }).run().then(
-                function(result) {
-                    console.log(JSON.stringify(result));
-                    res.json(result);
-                }
-            );
+            r.db("WorkPlanner").table("Directories")
+                .get(dirId).merge(function(directory) {
+                    return {
+                        'issues': r.db("WorkPlanner").table("Issues").filter({ idDirectory: directory('id') }).coerceTo('array')
+                    };
+                })
+                .run().then(
+                    function(result) {
+                        console.log(JSON.stringify(result));
+                        res.json(result);
+                    });
         });
 }
 
@@ -327,7 +334,6 @@ function createComment(req, res, next) {
     var issueId = req.swagger.params.issueId.value;
     var newComment = {
         createDate: Date().toString(),
-        modifyDate: "",
         content: req.swagger.params.content.value,
         idIssue: issueId
     };

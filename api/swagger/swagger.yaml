@@ -74,6 +74,33 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Creates new directory for project
+      operationId: createDirectory
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: Directory title
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: Directory description
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DirectoryResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     put:
       description: Modifies a project
       operationId: modifyProject
@@ -86,7 +113,6 @@ paths:
         - name: title
           in: formData
           description: Project title
-          required: true
           type: string
         - name: description
           description: Project description
@@ -119,6 +145,126 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}:
+    x-swagger-router-controller: management_controller
+    get:
+      description: Shows a directory
+      operationId: getDirectory
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DirectoryResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Creates new issue in directory
+      operationId: createIssue
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: Title of issue
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: Issue description
+          type: string
+        - name: priority
+          in: formData
+          description: Issue priority
+          type: string
+        - name: tag
+          in: formData
+          description: Issue tag
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: Modifies directory
+      operationId: modifyDirectory
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: Directory title
+          type: string
+        - name: description
+          in: formData
+          description: Directory description
+          type: string
+      responses:
+          "200":
+            description: Success
+            schema:
+              $ref: "#/definitions/DirectoryResponse"
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Deletes directory
+      operationId: deleteDirectory
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+      responses:
+          "200":
+            description: Success
+            schema:
+              $ref: "#/definitions/ProjectResponse"
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -153,6 +299,79 @@ definitions:
             id: 
               type: string
             title:
+              type: string
+  DirectoryResponse:
+    required:
+      - id
+      - title
+      - idProject
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      idProject:
+        type: string
+      issues:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+            createDate:
+              type: string
+            modifyDate:
+              type: string
+            status:
+              type: string
+            priority:
+              type: string
+            tag:
+              type: string
+  IssueResponse:
+    required:
+      - id
+      - title
+      - createDate
+      - status
+      - tag
+      - idDirectory
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      createDate:
+        type: string
+      modifyDate:
+        type: string
+      status:
+        type: string
+      priority:
+        type: string
+      tag:
+        type: string
+      idDirectory:
+        type: string
+      comments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            createDate:
+              type: string
+            modifyDate:
+              type: string
+            content:
               type: string
   ErrorResponse:
     required:

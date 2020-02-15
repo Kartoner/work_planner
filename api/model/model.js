@@ -76,7 +76,7 @@ let Issue = thinkagain.createModel('Issues', {
         tag: { type: 'string' },
         idDirectory: { type: 'string' }
     },
-    required: ['title', 'createDate', 'status', 'tag', 'idProject', 'idDirectory']
+    required: ['title', 'createDate', 'status', 'tag', 'idDirectory']
 });
 
 Issue.belongsTo(Directory, 'directory', 'idDirectory', 'id');
