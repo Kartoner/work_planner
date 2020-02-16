@@ -265,6 +265,217 @@ paths:
             description: Error
             schema:
               $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/{issueId}:
+    x-swagger-router-controller: management_controller
+    get:
+      description: Shows an issue
+      operationId: getIssue
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Creates new comment in issue
+      operationId: createComment
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: content
+          in: formData
+          description: Comment content
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: Modifies an issue
+      operationId: modifyIssue
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: Title of issue
+          type: string
+        - name: description
+          in: formData
+          description: Issue description
+          type: string
+        - name: status
+          in: formData
+          description: Issue status
+          type: string
+        - name: priority
+          in: formData
+          description: Issue priority
+          type: string
+        - name: tag
+          in: formData
+          description: Issue tag
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Deletes an issue
+      operationId: deleteIssue
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DirectoryResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/{issueId}/{commentId}:
+    x-swagger-router-controller: management_controller
+    put:
+      description: Modifies a comment
+      operationId: modifyComment
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: commentId
+          in: path
+          description: Comment ID
+          required: true
+          type: string
+        - name: content
+          in: formData
+          description: Comment content
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Deletes a comment
+      operationId: deleteComment
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: commentId
+          in: path
+          description: Comment ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
