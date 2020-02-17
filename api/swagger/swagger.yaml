@@ -18,6 +18,49 @@ consumes:
 produces:
   - application/json
 paths:
+  /libs/{folder}/{name}:
+    x-swagger-router-controller: libs
+    get:
+      operationId: fileserve
+      description: return selected files
+      parameters:
+        - name: folder
+          type: string
+          in: path
+          required: true
+        - name: name
+          type: string
+          in: path
+          required: true
+      produces:
+        - text/html; charset=utf-8
+        - text/css
+        - text/javascript
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /home:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: homepage
+      description: Returns homepage
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /project:
     x-swagger-router-controller: management_controller
     get:
