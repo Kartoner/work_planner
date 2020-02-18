@@ -188,6 +188,50 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /project/{id}/view:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: projectView
+      description: Returns project view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}/modify:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: projectModify
+      description: Returns project modification view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /project/{id}/{directoryId}:
     x-swagger-router-controller: management_controller
     get:
@@ -308,6 +352,60 @@ paths:
             description: Error
             schema:
               $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/view:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: directoryView
+      description: Returns directory view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/modify:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: directoryModify
+      description: Returns directory modification view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /project/{id}/{directoryId}/{issueId}:
     x-swagger-router-controller: management_controller
     get:
@@ -447,6 +545,70 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/{issueId}/view:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: issueView
+      description: Returns issue view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/{issueId}/modify:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: issueModify
+      description: Returns issue modification view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /project/{id}/{directoryId}/{issueId}/{commentId}:
     x-swagger-router-controller: management_controller
     put:
@@ -515,6 +677,43 @@ paths:
           description: Success
           schema:
             $ref: "#/definitions/IssueResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /project/{id}/{directoryId}/{issueId}/{commentId}/modify:
+    x-swagger-router-controller: web_controller
+    get:
+      operationId: commentModify
+      description: Returns comment modification view
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: commentId
+          in: path
+          description: Comment ID
+          required: true
+          type: string
+      produces:
+        - text/html; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
         default:
           description: Error
           schema:
@@ -595,6 +794,7 @@ definitions:
       - status
       - tag
       - idDirectory
+      - idProject
     properties:
       id:
         type: string
@@ -613,6 +813,8 @@ definitions:
       tag:
         type: string
       idDirectory:
+        type: string
+      idProject:
         type: string
       comments:
         type: array

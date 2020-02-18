@@ -5,21 +5,11 @@
     <link rel="stylesheet" href="libs/angular-material/angular-material.min.css">
     <title>WorkPlanner</title>
 </head>
-<body ng-app="WorkPlanner" layout="column">
+<body ng-app="HomeView" ng-controller='ProjectsController' layout="column">
     <script src="libs/angular/angular.js"></script>
     <script src="libs/angular-animate/angular-animate.js"></script>
     <script src="libs/angular-aria/angular-aria.js"></script>
     <script src="libs/angular-material/angular-material.js"></script>
-    <script type="text/javascript">
-        angular.module('WorkPlanner',['ngMaterial', "ng", "ngAnimate", "ngAria"])
-        .controller('ProjectsController', function($scope, $http){
-            $http.get('http://localhost:10010/project')
-            .then(function(response){
-                $scope.projects = response.data
-            })
-        })
-    </script>
-
     
         <md-toolbar>
             <div id="home" style="padding: 10px">
@@ -30,18 +20,56 @@
             <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9">
                 <md-list ng-controller='ProjectsController'>
                     <md-list-item ng-repeat='project in projects'>
-                        <md-button ng-href='http://localhost:10010/project/{{project.id}}'>{{project.title}}</md-button>
+                        <md-button ng-href='http://localhost:10010/project/{{project.id}}/view'>{{project.title}}</md-button>
                     </md-list-item>
                 </md-list>
             </md-sidenav>
         
             <md-content id="content" style="flex: 1">
                 <div style="padding: 10px">
-                    Hi! Welcome to Work Planner. Choose your project.
+                    Hi! Welcome to Work Planner. Choose your project or create new one below.
                 </div>
+                <form name="newProjectForm" ng-submit="createProject()" style="border-style: solid; border-width: 2px;">
+                    <div class="form-header  blue darken-4">
+                        <h3>Create new project:</h3>
+                    </div>
+
+                    <div class="md-form">
+                        <input type="text" id="form2" class="form-control" ng-model="project.title">
+                        <label for="form2">Project title</label>
+                    </div>
+
+                    <div class="md-form">
+                        <textarea id="form4" class="form-control" ng-model="project.description"></textarea>
+                        <label for="form4">Project description</label>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Create" class="btn" style="background-color: green" />
+                    </div>
+                </form>
             </md-content>
         </div>
 
+    <script type="text/javascript">
+        angular.module('HomeView',['ngMaterial', "ng", "ngAnimate", "ngAria"])
+        .controller('ProjectsController', function($scope, $http, $window){
+            $http.get('http://localhost:10010/project')
+            .then(function(response){
+                $scope.projects = response.data
+            });
+
+            $scope.project = {title: undefined, description: undefined};
+
+            $scope.createProject = function() {
+
+                $http.post("http://localhost:10010/project", $scope.project)
+                .then(function(response){
+                    $window.location.href = 'http://localhost:10010/project/' + response.data.id + '/view';
+                });
+            };
+        })
+    </script>
 
 </body>
 </html>

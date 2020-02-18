@@ -255,7 +255,8 @@ function createIssue(req, res, next) {
         status: model.issueStatus.OPEN,
         priority: req.swagger.params.priority.value,
         tag: req.swagger.params.tag.value,
-        idDirectory: dirId
+        idDirectory: dirId,
+        idProject: projectId
     };
     r.db("WorkPlanner").table("Issues").insert(newIssue)
         .run().then(
@@ -282,7 +283,9 @@ function modifyIssue(req, res, next) {
         modifyDate: Date().toString(),
         status: req.swagger.params.status.value,
         priority: req.swagger.params.priority.value,
-        tag: req.swagger.params.tag.value
+        tag: req.swagger.params.tag.value,
+        idDirectory: dirId,
+        idProject: projectId
     };
     r.db("WorkPlanner").table("Issues").get(issueId).update(updatedIssue)
         .run().then(
@@ -335,7 +338,9 @@ function createComment(req, res, next) {
     var newComment = {
         createDate: Date().toString(),
         content: req.swagger.params.content.value,
-        idIssue: issueId
+        idIssue: issueId,
+        idDirectory: dirId,
+        idProject: projectId
     };
     r.db("WorkPlanner").table("Comments").insert(newComment)
         .run().then(function(result) {
@@ -359,7 +364,9 @@ function modifyComment(req, res, next) {
     var updatedComment = {
         modifyDate: Date().toString(),
         content: req.swagger.params.content.value,
-        idIssue: issueId
+        idIssue: issueId,
+        idDirectory: dirId,
+        idProject: projectId
     };
     r.db("WorkPlanner").table("Comments").get(commentId).update(updatedComment)
         .run().then(function(result) {

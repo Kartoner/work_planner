@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../../libs/angular-material/angular-material.min.css">
+    <title>WorkPlanner</title>
+</head>
+<body ng-app="DirectoryView" ng-controller='DirectoryViewController' layout="column">
+    <script src="../../../libs/angular/angular.js"></script>
+    <script src="../../../libs/angular-animate/angular-animate.js"></script>
+    <script src="../../../libs/angular-aria/angular-aria.js"></script>
+    <script src="../../../libs/angular-material/angular-material.js"></script>
+    
+        <md-toolbar>
+            <div id="home" style="padding: 10px">
+                <a href='http://localhost:10010/home' style="color: white">WORK PLANNER</a>
+            </div>
+        </md-toolbar>
+        <div class="container" layout="raw" style="flex: 1">
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9">
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/view'>Back</md-button>
+                <h3>{{directory.title}}</h3>
+                <p style"word-wrap: break-word; width: 5%">{{directory.description}}</p>
+                <md-button ng-click='deleteDirectory()' style="background-color: red">Delete</md-button>
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/modify' style="background-color: yellow">Modify</md-button>
+            </md-sidenav>
+        
+            <md-content id="content" style="flex: 1">
+                <md-list>
+                    <md-list-item ng-repeat='issue in directory.issues'>
+                        <md-button ng-href='http://localhost:10010/project/{{issue.idProject}}/{{issue.idDirectory}}/{{issue.id}}/view'>{{issue.title}}</md-button>
+                    </md-list-item>
+                </md-list>
+                <form name="newIssueForm" ng-submit="createIssue()" style="border-style: solid; border-width: 2px;">
+                    <div class="form-header  blue darken-4">
+                        <h3>Create new issue:</h3>
+                    </div>
+
+                    <div class="md-form">
+                        <input type="text" id="form2" class="form-control" ng-model="issue.title">
+                        <label for="form2">Issue title</label>
+                    </div>
+
+                    <div class="md-form">
+                        <textarea id="form4" class="form-control" ng-model="issue.description"></textarea>
+                        <label for="form4">Issue description</label>
+                    </div>
+
+                    <div class="md-form">
+                        <select id="form2" class="form-control" ng-model="issue.priority">
+                            <option value="Minor">Minor</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Major">Major</option>
+                            <option value="Catastrophic">Catastrophic</option>
+                        </select>
+                        <label for="form2">Priority</label>
+                    </div>
+
+                    <div class="md-form">
+                        <select id="form2" class="form-control" ng-model="issue.tag">
+                            <option value="Bug">Bug</option>
+                            <option value="Development">Development</option>
+                            <option value="Improvement">Improvement</option>
+                            <option value="Refactor">Refactor</option>
+                        </select>
+                        <label for="form2">Tag</label>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Create" class="btn" style="background-color: green" />
+                    </div>
+                </form>
+            </md-content>
+        </div>
+
+    <script type="text/javascript">
+
+        angular.module('DirectoryView',['ngMaterial', "ng", "ngAnimate", "ngAria"])
+        .controller('DirectoryViewController', function($scope, $http, $window, $location){
+            $scope.projectId = $location.absUrl().split('/').slice(-3)[0];
+            $scope.directoryId = $location.absUrl().split('/').slice(-2)[0];
+
+            $http.get('http://localhost:10010/project/' + $scope.projectId + '/' + $scope.directoryId)
+            .then(function(response){
+                $scope.directory = response.data
+            });
+
+            $scope.issue = {title: undefined, description: undefined, priority: undefined, tag: undefined};
+
+           $scope.createIssue = function() {
+
+                $http.post("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId, $scope.directory)
+                .then(function(response){
+                    $window.location.href = 'http://localhost:10010/project/' + response.data.idProject + '/' + response.data.idDirectory + '/' + response.data.id + '/view';
+                });
+            };
+
+            $scope.deleteDirectory = function() {
+
+                $http.delete("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId)
+                .then(function(response){
+                    $window.location.href = 'http://localhost:10010/project/' + $scope.projectId + "/view";
+                });
+            };
+        })
+    </script>
+
+</body>
+</html>
+

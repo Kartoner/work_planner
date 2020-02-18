@@ -74,12 +74,14 @@ let Issue = thinkagain.createModel('Issues', {
         status: { type: 'string' },
         priority: { type: 'string' },
         tag: { type: 'string' },
+        idProject: { type: 'string' },
         idDirectory: { type: 'string' }
     },
-    required: ['title', 'createDate', 'status', 'tag', 'idDirectory']
+    required: ['title', 'createDate', 'status', 'tag', 'idProject', 'idDirectory']
 });
 
 Issue.belongsTo(Directory, 'directory', 'idDirectory', 'id');
+Issue.belongsTo(Project, 'project', 'idProject', 'id');
 
 // COMMENT
 
@@ -90,12 +92,16 @@ let Comment = thinkagain.createModel('Comments', {
         createDate: { type: 'string', format: 'date-time' },
         modifyDate: { type: 'string', format: 'date-time' },
         content: { type: 'string' },
+        idProject: { type: 'string' },
+        idDirectory: { type: 'string' },
         idIssue: { type: 'string' }
     },
-    required: ['createDate', 'content']
+    required: ['createDate', 'content', 'idProject', 'idDirectory', 'idIssue']
 });
 
 Comment.belongsTo(Issue, 'issue', 'idIssue', 'id');
+Comment.belongsTo(Directory, 'directory', 'idDirectory', 'id');
+Comment.belongsTo(Project, 'project', 'idProject', 'id');
 
 module.exports = {
     issueStatus: issueStatus,
