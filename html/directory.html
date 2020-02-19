@@ -17,28 +17,29 @@
             </div>
         </md-toolbar>
         <div class="container" layout="raw" style="flex: 1">
-            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9">
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9; padding: 10px">
                 <md-button ng-href='http://localhost:10010/project/{{projectId}}/view'>Back</md-button>
                 <h3>{{directory.title}}</h3>
                 <p style"word-wrap: break-word; width: 5%">{{directory.description}}</p>
                 <md-button ng-click='deleteDirectory()' style="background-color: red">Delete</md-button>
-                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/modify' style="background-color: yellow">Modify</md-button>
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/modify' style="background-color: yellow">Edit</md-button>
             </md-sidenav>
         
             <md-content id="content" style="flex: 1">
-                <md-list>
+                <md-list style="border-style: solid; border-width: 2px; padding: 10px">
+                    <h3>Issues:</h3>
                     <md-list-item ng-repeat='issue in directory.issues'>
-                        <md-button ng-href='http://localhost:10010/project/{{issue.idProject}}/{{issue.idDirectory}}/{{issue.id}}/view'>{{issue.title}}</md-button>
+                        <md-button ng-href='http://localhost:10010/project/{{issue.idProject}}/{{issue.idDirectory}}/{{issue.id}}/view'>[{{issue.status}}] {{issue.title}} [{{issue.tag}}] [{{issue.priority}}]</md-button>
                     </md-list-item>
                 </md-list>
-                <form name="newIssueForm" ng-submit="createIssue()" style="border-style: solid; border-width: 2px;">
+                <form name="newIssueForm" ng-submit="createIssue()" style="border-style: solid; border-width: 2px; padding: 10px">
                     <div class="form-header  blue darken-4">
                         <h3>Create new issue:</h3>
                     </div>
 
                     <div class="md-form">
                         <input type="text" id="form2" class="form-control" ng-model="issue.title">
-                        <label for="form2">Issue title</label>
+                        <label for="form2">Issue title (required)</label>
                     </div>
 
                     <div class="md-form">
@@ -63,7 +64,7 @@
                             <option value="Improvement">Improvement</option>
                             <option value="Refactor">Refactor</option>
                         </select>
-                        <label for="form2">Tag</label>
+                        <label for="form2">Tag (required)</label>
                     </div>
 
                     <div class="text-center">
@@ -89,7 +90,7 @@
 
            $scope.createIssue = function() {
 
-                $http.post("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId, $scope.directory)
+                $http.post("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId, $scope.issue)
                 .then(function(response){
                     $window.location.href = 'http://localhost:10010/project/' + response.data.idProject + '/' + response.data.idDirectory + '/' + response.data.id + '/view';
                 });

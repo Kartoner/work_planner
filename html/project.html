@@ -17,28 +17,29 @@
             </div>
         </md-toolbar>
         <div class="container" layout="raw" style="flex: 1">
-            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9">
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9; padding: 10px">
                 <md-button ng-href='http://localhost:10010/home'>Back</md-button>
                 <h3>{{project.title}}</h3>
                 <p style"word-wrap: break-word; width: 5%">{{project.description}}</p>
                 <md-button ng-click='deleteProject()' style="background-color: red">Delete</md-button>
-                <md-button ng-href='http://localhost:10010/project/{{project.id}}/modify' style="background-color: yellow">Modify</md-button>
+                <md-button ng-href='http://localhost:10010/project/{{project.id}}/modify' style="background-color: yellow">Edit</md-button>
             </md-sidenav>
         
             <md-content id="content" style="flex: 1">
-                <md-list>
+                <md-list style="border-style: solid; border-width: 2px; padding: 10px">
+                    <h3>Directories:</h3>
                     <md-list-item ng-repeat='directory in project.directories'>
                         <md-button ng-href='http://localhost:10010/project/{{directory.idProject}}/{{directory.id}}/view'>{{directory.title}}</md-button>
                     </md-list-item>
                 </md-list>
-                <form name="newDirectoryForm" ng-submit="createDirectory()" style="border-style: solid; border-width: 2px;">
+                <form name="newDirectoryForm" ng-submit="createDirectory()" style="border-style: solid; border-width: 2px; padding: 10px">
                     <div class="form-header  blue darken-4">
                         <h3>Create new directory:</h3>
                     </div>
 
                     <div class="md-form">
                         <input type="text" id="form2" class="form-control" ng-model="directory.title">
-                        <label for="form2">Directory title</label>
+                        <label for="form2">Directory title (required)</label>
                     </div>
 
                     <div class="md-form">

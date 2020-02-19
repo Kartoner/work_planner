@@ -611,6 +611,39 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /project/{id}/{directoryId}/{issueId}/{commentId}:
     x-swagger-router-controller: management_controller
+    get:
+      description: Shows a comment
+      operationId: getComment
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          type: string
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          type: string
+        - name: issueId
+          in: path
+          description: Issue ID
+          required: true
+          type: string
+        - name: commentId
+          in: path
+          description: Comment ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CommentResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     put:
       description: Modifies a comment
       operationId: modifyComment
@@ -829,6 +862,28 @@ definitions:
               type: string
             content:
               type: string
+  CommentResponse:
+    required:
+      - id
+      - createDate
+      - idIssue
+      - idDirectory
+      - idProject
+    properties:
+      id:
+        type: string
+      createDate:
+        type: string
+      modifyDate:
+        type: string
+      content:
+        type: string
+      idIssue:
+        type: string
+      idDirectory:
+        type: string
+      idProject:
+        type: string
   ErrorResponse:
     required:
       - message

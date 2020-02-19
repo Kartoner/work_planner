@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../../../libs/angular-material/angular-material.min.css">
+    <title>WorkPlanner</title>
+</head>
+<body ng-app="IssueView" ng-controller='IssueViewController' layout="column">
+    <script src="../../../../libs/angular/angular.js"></script>
+    <script src="../../../../libs/angular-animate/angular-animate.js"></script>
+    <script src="../../../../libs/angular-aria/angular-aria.js"></script>
+    <script src="../../../../libs/angular-material/angular-material.js"></script>
+    
+        <md-toolbar>
+            <div id="home" style="padding: 10px">
+                <a href='http://localhost:10010/home' style="color: white">WORK PLANNER</a>
+            </div>
+        </md-toolbar>
+        <div class="container" layout="raw" style="flex: 1">
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9; padding: 10px">
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/view'>Back</md-button>
+                <md-button ng-click='deleteIssue()' style="background-color: red">Delete</md-button>
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/{{issueId}}/modify' style="background-color: yellow">Edit</md-button>
+            </md-sidenav>
+        
+            <md-content id="content" style="flex: 1">
+
+                <div style="border-style: solid; border-width: 2px; padding: 10px">
+                    <h3>{{issue.title}}</h3>
+                    <p>{{issue.description}}<p>
+                    <p>Creation date: {{issue.createDate}}</p>
+                    <p>Last modification date: {{issue.modifyDate}}</p>
+                    <p>Status: {{issue.status}}</p>
+                    <p>Priority: {{issue.priority}}</p>
+                    <p>Tag: {{issue.tag}}</p>
+                </div>
+
+                <md-list style="border-style: solid; border-width: 2px; padding: 10px">
+                    <h3>Notes:</h3>
+                    <md-list-item ng-repeat='comment in issue.comments'>
+                        <div style="border-style: solid; border-width: 2px; padding: 10px">
+                            <p>{{comment.createDate}}</p>
+                            <p>{{comment.content}}</p>
+                            <md-button ng-click='deleteComment(comment.id)' style="background-color: red">Delete</md-button>
+                            <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/{{issueId}}/{{comment.id}}/modify' style="background-color: yellow">Edit</md-button>
+                        </div>
+                    </md-list-item>
+                </md-list>
+                <form name="newCommentForm" ng-submit="createComment()" style="border-style: solid; border-width: 2px; padding: 10px">
+                    <div class="form-header  blue darken-4">
+                        <h3>Create new note:</h3>
+                    </div>
+
+                    <div class="md-form">
+                        <textarea type="text" id="form2" class="form-control" ng-model="comment.content"></textarea>
+                        <label for="form2">Content</label>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Add" class="btn" style="background-color: green" />
+                    </div>
+                </form>
+            </md-content>
+        </div>
+
+    <script type="text/javascript">
+
+        angular.module('IssueView',['ngMaterial', "ng", "ngAnimate", "ngAria"])
+        .controller('IssueViewController', function($scope, $http, $window, $location){
+            $scope.projectId = $location.absUrl().split('/').slice(-4)[0];
+            $scope.directoryId = $location.absUrl().split('/').slice(-3)[0];
+            $scope.issueId = $location.absUrl().split('/').slice(-2)[0];
+
+            $http.get('http://localhost:10010/project/' + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId)
+            .then(function(response){
+                $scope.issue = response.data
+            });
+
+            $scope.comment = {content: undefined};
+
+           $scope.createComment = function() {
+
+                $http.post("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId, $scope.comment)
+                .then(function(response){
+                    $window.location.reload();
+                });
+            };
+
+            $scope.deleteComment = function(commentId) {
+
+                $http.delete("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId + '/' + commentId)
+                .then(function(response){
+                    $window.location.reload();
+                });
+            };
+
+            $scope.deleteIssue = function() {
+
+                $http.delete("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId)
+                .then(function(response){
+                    $window.location.href = 'http://localhost:10010/project/' + $scope.projectId + '/' + $scope.directoryId + "/view";
+                });
+            };
+        })
+    </script>
+
+</body>
+</html>
+

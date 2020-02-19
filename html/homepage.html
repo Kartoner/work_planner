@@ -17,8 +17,8 @@
             </div>
         </md-toolbar>
         <div class="container" layout="raw" style="flex: 1">
-            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9">
-                <md-list ng-controller='ProjectsController'>
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9; padding: 10px">
+                <md-list>
                     <md-list-item ng-repeat='project in projects'>
                         <md-button ng-href='http://localhost:10010/project/{{project.id}}/view'>{{project.title}}</md-button>
                     </md-list-item>
@@ -36,7 +36,7 @@
 
                     <div class="md-form">
                         <input type="text" id="form2" class="form-control" ng-model="project.title">
-                        <label for="form2">Project title</label>
+                        <label for="form2">Project title (required)</label>
                     </div>
 
                     <div class="md-form">

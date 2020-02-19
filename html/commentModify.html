@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../../../../libs/angular-material/angular-material.min.css">
+    <title>WorkPlanner</title>
+</head>
+<body ng-app="CommentModify" ng-controller='CommentModifyController' layout="column">
+    <script src="../../../../../libs/angular/angular.js"></script>
+    <script src="../../../../../libs/angular-animate/angular-animate.js"></script>
+    <script src="../../../../../libs/angular-aria/angular-aria.js"></script>
+    <script src="../../../../../libs/angular-material/angular-material.js"></script>
+    
+        <md-toolbar>
+            <div id="home" style="padding: 10px">
+                <a href='http://localhost:10010/home' style="color: white">WORK PLANNER</a>
+            </div>
+        </md-toolbar>
+        <div class="container" layout="raw" style="flex: 1">
+            <md-sidenav md-is-locked-open="true" style="background-color: #b0b7d9; padding: 10px">
+                <md-button ng-href='http://localhost:10010/project/{{projectId}}/{{directoryId}}/{{issueId}}/view'>Back</md-button>
+            </md-sidenav>
+        
+            <md-content id="content" style="flex: 1">
+
+                <form name="commentModifyForm" ng-submit="modifyComment()" style="border-style: solid; border-width: 2px; padding: 10px">
+                    <div class="form-header  blue darken-4">
+                        <h3>Edit Note:</h3>
+                    </div>
+
+                    <div class="md-form">
+                        <textarea id="form4" class="form-control" ng-model="comment.content"></textarea>
+                        <label for="form4">Content</label>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Save" class="btn" style="background-color: green" />
+                    </div>
+                </form>
+
+            </md-content>
+        </div>
+
+    <script type="text/javascript">
+
+        angular.module('CommentModify',['ngMaterial', "ng", "ngAnimate", "ngAria"])
+        .controller('CommentModifyController', function($scope, $http, $window, $location){
+            $scope.projectId = $location.absUrl().split('/').slice(-5)[0];
+            $scope.directoryId = $location.absUrl().split('/').slice(-4)[0];
+            $scope.issueId = $location.absUrl().split('/').slice(-3)[0];
+            $scope.commentId = $location.absUrl().split('/').slice(-2)[0];
+
+            $http.get('http://localhost:10010/project/' + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId + '/' + $scope.commentId)
+            .then(function(response){
+                $scope.comment = response.data
+            });
+
+           $scope.modifyComment = function() {
+
+                $http.put("http://localhost:10010/project/" + $scope.projectId + '/' + $scope.directoryId + '/' + $scope.issueId + '/' + $scope.commentId, $scope.comment)
+                .then(function(response){
+                    $window.location.href = 'http://localhost:10010/project/' + response.data.idProject + '/' + response.data.idDirectory + '/' + response.data.id + '/view';
+                });
+            };
+
+        })
+    </script>
+
+</body>
+</html>
+

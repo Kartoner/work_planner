@@ -19,6 +19,7 @@ module.exports = {
     createIssue,
     modifyIssue,
     deleteIssue,
+    getComment,
     createComment,
     modifyComment,
     deleteComment
@@ -248,6 +249,7 @@ function getIssue(req, res, next) {
 
 function createIssue(req, res, next) {
     var dirId = req.swagger.params.directoryId.value;
+    var projectId = req.swagger.params.id.value;
     var newIssue = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value,
@@ -277,6 +279,8 @@ function createIssue(req, res, next) {
 
 function modifyIssue(req, res, next) {
     var issueId = req.swagger.params.issueId.value;
+    var dirId = req.swagger.params.directoryId.value;
+    var projectId = req.swagger.params.id.value;
     var updatedIssue = {
         title: req.swagger.params.title.value,
         description: req.swagger.params.description.value,
@@ -333,8 +337,20 @@ function deleteIssue(req, res, next) {
         });
 }
 
+function getComment(req, res, next) {
+    var commentId = req.swagger.params.commentId.value;
+    r.db("WorkPlanner").table("Comments").get(commentId)
+        .run().then(
+            function(result) {
+                console.log(JSON.stringify(result));
+                res.json(result);
+            });
+}
+
 function createComment(req, res, next) {
     var issueId = req.swagger.params.issueId.value;
+    var dirId = req.swagger.params.directoryId.value;
+    var projectId = req.swagger.params.id.value;
     var newComment = {
         createDate: Date().toString(),
         content: req.swagger.params.content.value,
@@ -359,6 +375,8 @@ function createComment(req, res, next) {
 }
 
 function modifyComment(req, res, next) {
+    var dirId = req.swagger.params.directoryId.value;
+    var projectId = req.swagger.params.id.value;
     var issueId = req.swagger.params.issueId.value;
     var commentId = req.swagger.params.commentId.value;
     var updatedComment = {
